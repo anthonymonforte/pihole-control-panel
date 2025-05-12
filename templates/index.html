@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Pi-hole Control Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <h1>Pi-hole Control Panel</h1>
@@ -17,17 +18,19 @@
     {% endif %}
   {% endwith %}
 
-  <form method="POST" action="/pause">
-    <button name="duration" value="">Pause Pi-Hole</button>
-    <button name="duration" value="600">Pause Pi-Hole for 5 Minutes</button>
+  <form method="POST" action="/pause" style="padding-bottom: 20px;">
+    <button class="stop-button" name="duration" value="">Pause</button>
+  </form>
+  <form method="POST" action="/pause" style="padding-bottom: 20px;">
+    <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
   </form>
 
-  <form method="POST" action="/resume">
-    <button >Resume Pi-Hole</button>
+  <form method="POST" action="/resume" style="padding-bottom: 20px;">
+    <button class="start-button">Start</button>
   </form>
 
-  <form method="POST" action="/sync">
+  <!-- <form method="POST" action="/sync">
     <button>Run NebulaSync</button>
-  </form>
+  </form> -->
 </body>
 </html>

@@ -1,4 +1,6 @@
 # app.py
+# https://ftl.pi-hole.net/master/docs/
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
 import subprocess
@@ -16,14 +18,15 @@ def get_auth_token(domain, password):
     url = f"https://{domain}/api/auth"
     payload = {"password": password}
     try:
-        response = requests.post(url, json=payload, timeout=5)
-        response.raise_for_status()
+        with requests.Session() as session:
+            response = session.post(url, json=payload, timeout=5)
+            response.raise_for_status()
 
-        data = response.json()
-        sid = data['session']['sid']
-        csrf = data['session']['csrf']
+            data = response.json()
+            sid = data['session']['sid']
+            csrf = data['session']['csrf']
 
-        return sid, csrf
+            return sid, csrf
 
     except Exception as e:
         print(f"Auth failed for {domain}: {e}")
@@ -57,16 +60,20 @@ def pihole_action(action, duration=None):
             return False, "Invalid action"
 
         try:
-            if method == "post":
+            with requests.Session() as session:
+
                 headers = {
                     "X-FTL-SID": sid,
                     "X-FTL-CSRF": csrf
                 }
 
-                r = requests.post(url, headers=headers, json=payload, timeout=5)
-            else:
-                r = requests.get(url, timeout=5)
-            r.raise_for_status()
+                if method == "post":
+                    r = session.post(url, headers=headers, json=payload, timeout=5)
+                else:
+                    r = session.get(url, timeout=5)
+                r.raise_for_status()
+
+                session.delete(f"https://{domain}/api/auth", headers=headers)
 
         except Exception as e:
             return False, str(e)
