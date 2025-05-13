@@ -32,6 +32,36 @@ def get_auth_token(domain, password):
         print(f"Auth failed for {domain}: {e}")
         return None, None
 
+def get_pihole_status(target):
+    if target not in PIHOLE_INSTANCES:
+        return None
+
+    instance = PIHOLE_INSTANCES[target]
+    url = f"http://{instance['domain']}/api/dns/blocking"  # Pi-hole v6 blocking status endpoint
+
+    try:
+        with requests.Session() as session:
+            domain = instance["domain"]
+            sid, csrf = get_auth_token(domain, instance['token'])
+
+            headers = {
+                    "X-FTL-SID": sid,
+                    "X-FTL-CSRF": csrf
+            }
+
+            r = session.get(url, headers=headers, timeout=5)
+            r.raise_for_status()
+            data = r.json()
+
+            session.delete(f"https://{domain}/api/auth", headers=headers)
+
+            print(f"{data}")
+
+            return data.get("blocking", None)
+
+    except Exception as e:
+        print(f"Error getting status for {target}: {e}")
+        return None
 
 def pihole_action(action, duration=None):
 
@@ -82,7 +112,9 @@ def pihole_action(action, duration=None):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    blocking_status = get_pihole_status('primary')
+    print(f"{blocking_status}")
+    return render_template('index.html', status=blocking_status)
 
 
 @app.route('/pause', methods=['POST'])

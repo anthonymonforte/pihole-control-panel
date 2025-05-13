@@ -18,16 +18,22 @@
     {% endif %}
   {% endwith %}
 
-  <form method="POST" action="/pause" style="padding-bottom: 20px;">
-    <button class="stop-button" name="duration" value="">Pause</button>
-  </form>
-  <form method="POST" action="/pause" style="padding-bottom: 20px;">
-    <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
-  </form>
-
-  <form method="POST" action="/resume" style="padding-bottom: 20px;">
-    <button class="start-button">Start</button>
-  </form>
+  {% if status is not none %}
+    {% if status == 'enabled' %}
+        <form method="POST" action="/pause" style="padding-bottom: 20px;">
+            <button class="stop-button" name="duration" value="">Pause</button>
+        </form>
+        <form method="POST" action="/pause" style="padding-bottom: 20px;">
+            <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
+        </form>
+    {% else %}
+        <form method="POST" action="/resume" style="padding-bottom: 20px;">
+            <button class="start-button">Resume</button>
+        </form>
+    {% endif %}
+  {% else %}
+        <p style="color: red;">Unable to determine Pi-hole status.</p>
+  {% endif %}
 
   <!-- <form method="POST" action="/sync">
     <button>Run NebulaSync</button>

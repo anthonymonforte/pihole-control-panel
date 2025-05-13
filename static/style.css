@@ -60,6 +60,7 @@ body {
     background: linear-gradient(to right, rgb(6, 216, 6), rgb(2, 145, 2));
     text-shadow: -6px 3px 2px rgba(0, 0, 0, 0.2);
     box-shadow: -2px 0 0 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer
   }
 
   button.stop-button:hover {
@@ -67,6 +68,7 @@ body {
     background: linear-gradient(to right, red, rgb(185, 1, 1));
     text-shadow: -6px 3px 2px rgba(0, 0, 0, 0.2);
     box-shadow: -2px 0 0 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer
   }
 
   button::before {
