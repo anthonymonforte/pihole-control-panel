@@ -112,9 +112,22 @@ def pihole_action(action, duration=None):
 
 @app.route('/')
 def index():
-    blocking_status = get_pihole_status('primary')
-    print(f"{blocking_status}")
-    return render_template('index.html', status=blocking_status)
+    first_status = None
+    devices_with_status = []
+    for instance_name in PIHOLE_INSTANCES:
+        device = PIHOLE_INSTANCES[instance_name]
+        status = get_pihole_status(instance_name)
+
+        if(first_status is None):
+            first_status = status
+
+        devices_with_status.append({
+            "name": device["name"],
+            "image": device["image"],
+            "status": status
+        })
+
+    return render_template('index.html', devices=devices_with_status, status=first_status)
 
 
 @app.route('/pause', methods=['POST'])

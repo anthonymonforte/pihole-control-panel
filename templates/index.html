@@ -4,39 +4,50 @@
   <meta charset="UTF-8">
   <title>Pi-hole Control Panel</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <h1>Pi-hole Control Panel</h1>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul>
-      {% for category, message in messages %}
-        <li style="color: {{ 'green' if category == 'success' else 'red' }}">{{ message }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+  <div class="device-container">
+    {% for device in devices %}
+      <div class="device-card">
+        <img src="{{ url_for('static', filename=device.image) }}" alt="{{ device.name }} image">
+        <p class="device-name">{{ device.name }}</p>
+        <p class="device-status {{ device.status|lower }}">{{ device.status }}</p>
+      </div>
+    {% endfor %}
+  </div>
 
-  {% if status is not none %}
-    {% if status == 'enabled' %}
-        <form method="POST" action="/pause" style="padding-bottom: 20px;">
-            <button class="stop-button" name="duration" value="">Pause</button>
+  <div class="button-container">
+    {% if status is not none %}
+      {% if status == 'enabled' %}
+        <form method="POST" action="/pause">
+          <button class="stop-button" name="duration" value="">Pause</button>
         </form>
-        <form method="POST" action="/pause" style="padding-bottom: 20px;">
-            <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
+        <form method="POST" action="/pause">
+          <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
         </form>
+      {% else %}
+        <form method="POST" action="/resume">
+          <button class="start-button">Resume</button>
+        </form>
+      {% endif %}
     {% else %}
-        <form method="POST" action="/resume" style="padding-bottom: 20px;">
-            <button class="start-button">Resume</button>
-        </form>
+      <p style="color: red;">Unable to determine Pi-hole status.</p>
     {% endif %}
-  {% else %}
-        <p style="color: red;">Unable to determine Pi-hole status.</p>
-  {% endif %}
+  </div>
 
-  <!-- <form method="POST" action="/sync">
-    <button>Run NebulaSync</button>
-  </form> -->
+  <div class="status-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+          <li style="color: {{ 'green' if category == 'success' else 'red' }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
 </body>
 </html>
