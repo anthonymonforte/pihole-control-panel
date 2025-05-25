@@ -144,3 +144,22 @@ button.stop-button:hover {
 .device-status.offline {
   color: red;
 }
+
+.sprite {
+  width: 165px;
+  height: 165px;
+  background-image: url('images/off-button.png');
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+  will-change: background-position, background-image;
+}
+
+.animate {
+  animation: toggleOff .5s steps(5) forwards;
+}
+
+@keyframes toggleOff {
+  to { background-position: -825px;}
+}

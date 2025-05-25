@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Pi-hole Control Panel</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preload" as="image" href="{{ url_for('static', filename='images/on-button.png') }}">
+  <link rel="preload" as="image" href="{{ url_for('static', filename='images/off-button.png') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -23,7 +25,7 @@
     {% if status is not none %}
       {% if status == 'enabled' %}
         <form method="POST" action="/pause">
-          <button class="stop-button" name="duration" value="">Pause</button>
+          <button class="stop-button" name="duration" value="">Pause</busstton>
         </form>
         <form method="POST" action="/pause">
           <button class="stop-button" name="duration" value="600">Pause for 5 Minutes</button>
@@ -37,6 +39,22 @@
       <p style="color: red;">Unable to determine Pi-hole status.</p>
     {% endif %}
   </div>
+
+  <div id="toggle-sprite" class="sprite"></div>
+
+  <script>
+    function playToggleAnimation() {
+      const sprite = document.getElementById('toggle-sprite');
+      sprite.classList.add('animate');
+
+      setTimeout(() => {
+        sprite.classList.remove('animate');
+        sprite.style.backgroundImage = "url('{{ url_for('static', filename='images/on-button.png') }}')";
+      }, 400);
+    }
+  </script>
+
+  <button onclick="playToggleAnimation()">Pause</button>
 
   <div class="status-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
