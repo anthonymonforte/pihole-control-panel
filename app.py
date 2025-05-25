@@ -132,7 +132,8 @@ def index():
 
 @app.route('/pause', methods=['POST'])
 def pause():
-    success, msg = pihole_action("disable", request.form['duration'])
+    # success, msg = pihole_action("disable", request.form['duration'])
+    success, msg = pihole_action("disable", "")
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
 
