@@ -1,8 +1,16 @@
 body {
   text-align: center;
-  font-family: sans-serif;
+  font-family: 'VT323', monospace;
+  letter-spacing: 1px;
+  font-size: 20px;
   margin: 20px;
   padding: 0;
+}
+
+h1 {
+  font-family: 'VT323', monospace;
+  font-size: 40px;
+  letter-spacing: 1px;
 }
 
 /* Layout container for button area */
@@ -98,13 +106,17 @@ button.stop-button:hover {
 
 .device-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  align-self: center;
+  justify-content:center;
+  gap: 15px;
   margin-bottom: 30px;
 }
 
 .device-card {
+  flex: 0 0 auto;
   border: 1px solid #ccc;
   border-radius: 12px;
   padding: 10px;
@@ -115,7 +127,7 @@ button.stop-button:hover {
 }
 
 .device-card img {
-  width: 100px;
+  width: auto;
   height: 100px;
   object-fit: contain;
 }
