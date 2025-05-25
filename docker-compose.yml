@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  pihole-control:
+    build: .
+    container_name: pihole-control-panel
+    ports:
+      - "2020:5000"  # host:container
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./config.py:/app/config.py:ro  # optional: mount config separately
