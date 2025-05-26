@@ -29,18 +29,6 @@ h1 {
   min-height: 40px; /* Reserve space even if no messages */
 }
 
-/* Responsive behavior */
-@media (max-width: 600px) {
-  .button-container {
-    width: 100%;
-  }
-
-  button {
-    width: 100% !important;
-    max-width: 160px;
-  }
-}
-
 /* Flash message list */
 ul {
   list-style-type: none;
@@ -173,4 +161,45 @@ button.stop-button:hover {
 
 @keyframes toggleOff {
   to { background-position: -850px;}
+}
+
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #f0f0f0;
+  }
+
+  .device-card {
+    background-color: #2c2c2c;
+    border-color: #333;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+  }
+
+  .device-status.running { color: #5fdd5f; }
+  .device-status.paused { color: #f0c674; }
+  .device-status.offline { color: #f55; }
+  .device-status.unknown { color: #aaa; }
+
+  .start-button,
+  .stop-button {
+    border-color: #888;
+  }
+
+  h1 {
+    color: #eee;
+  }
+}
+
+
+/* Responsive behavior */
+@media (max-width: 600px) {
+  .button-container {
+    width: 100%;
+  }
+
+  button {
+    width: 100% !important;
+    max-width: 160px;
+  }
 }
