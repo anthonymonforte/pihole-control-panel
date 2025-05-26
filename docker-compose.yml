@@ -9,6 +9,6 @@ services:
     restart: unless-stopped
     environment:
       - FLASK_ENV=production
-      - FLASK_SECRET_KEY=use-a-unique-random-value-here
+      - FLASK_SECRET_KEY # Load from .env file
     volumes:
       - ./config.py:/app/config.py:ro  # optional: mount config separately
