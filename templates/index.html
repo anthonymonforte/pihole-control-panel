@@ -3,15 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Pi-Hole Control Panel</title>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
-
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <!-- <link rel="preload" as="image" href="{{ url_for('static', filename='images/on-button.png') }}">
-  <link rel="preload" as="image" href="{{ url_for('static', filename='images/off-button.png') }}"> -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -34,7 +27,7 @@
           <div id="toggle-sprite"
               class="sprite"
               onclick="playToggleAnimation('{{status}}')"
-              style="background-image: url('{{ url_for('static', filename='images/off-button.png') }}');"
+              style="background-image: url('{{ url_for('static', filename='devices/images/off-button.png') }}');"
               role="button">
           </div>
         </form>
@@ -43,7 +36,7 @@
           <div id="toggle-sprite"
               class="sprite"
               onclick="playToggleAnimation('disabled')"
-              style="background-image: url('{{ url_for('static', filename='images/on-button.png') }}');"
+              style="background-image: url('{{ url_for('static', filename='devices/images/on-button.png') }}');"
               role="button">
           </div>
         </form>
