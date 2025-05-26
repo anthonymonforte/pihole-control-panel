@@ -153,6 +153,11 @@ button.stop-button:hover {
   image-rendering: pixelated;
   will-change: background-position, background-image;
   cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent; /* Remove gray flash on Android */
+  outline: none;                            /* Remove focus ring */
+  user-select: none;                        /* Prevent text/image selection */
+  touch-action: manipulation;               /* Prevent default delay or zoom */
 }
 
 .animate {
