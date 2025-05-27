@@ -79,8 +79,6 @@ def get_pihole_status(target):
 
             session.delete(f"https://{domain}/api/auth", headers=headers)
 
-            print(f"{data}")
-
             return data.get("blocking", None), target
 
     except Exception as e:
@@ -103,7 +101,6 @@ def pihole_action(action, duration=None):
 
 def pihole_device_action(instance_name, action, duration=None):
 
-    print(f"{action} with duration: {duration}")
     instance = PIHOLE_INSTANCES[instance_name]
 
     domain = instance['domain']
@@ -171,6 +168,7 @@ def summarize_action_tuples(action_result):
 @app.route('/')
 def index():
     first_status = None
+
     device_statuses = get_all_device_statuses()
     devices_with_status = []
 
