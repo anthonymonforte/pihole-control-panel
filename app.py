@@ -1,30 +1,38 @@
-# app.py
-# https://ftl.pi-hole.net/master/docs/
+"""
+This module provides auth and blocking pause/resume/status functions for across multiple
+instances Pi-hole using the Pi-Hole API.
+"""
 
-from flask import Flask, render_template, request, redirect, url_for, flash
-import requests
+
 import subprocess
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
+
+from dotenv import load_dotenv
+
+from flask import Flask, render_template, redirect, url_for, flash
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from config import PIHOLE_INSTANCES, NEBULA_SYNC_COMMAND
-from dotenv import load_dotenv
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-
-import os
+try:
+    from config import PIHOLE_INSTANCES, NEBULA_SYNC_COMMAND
+except ImportError:
+    PIHOLE_INSTANCES = None
+    NEBULA_SYNC_COMMAND = None
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 
-
 def get_retrying_session(
     retries=3,
-    backoff_factor=0.5,
-    status_forcelist=(500, 502, 503, 504, 400),
+    backoff_factor=0.5):
+    """Gets a HTTP session with a retry policy"""
+
+    status_forcelist=(500, 502, 503, 504, 400)
     allowed_methods=["GET", "POST"]
-):
+
     retry = Retry(
         total=retries,
         backoff_factor=backoff_factor,  # 0.5s, then 1s, then 2s
@@ -37,8 +45,9 @@ def get_retrying_session(
     session.mount("https://", adapter)
     return session
 
-
 def get_auth_token(domain, password):
+    """Obtains an auth token from a Pi-Hole instance using the App Password"""
+
     url = f"https://{domain}/api/auth"
     payload = {"password": password}
     try:
@@ -52,11 +61,13 @@ def get_auth_token(domain, password):
 
             return sid, csrf
 
-    except Exception as e:
+    except requests.RequestException as e:
         print(f"Auth failed for {domain}: {e}")
         return None, None
 
 def get_pihole_status(target):
+    """Gets the blocking status for a Pi-Hole instance"""
+
     if target not in PIHOLE_INSTANCES:
         return None
 
@@ -81,25 +92,30 @@ def get_pihole_status(target):
 
             return data.get("blocking", None), target
 
-    except Exception as e:
+    except requests.RequestException as e:
         print(f"Error getting status for {target}: {e}")
         return None, None
 
-def pihole_action(action, duration=None):
+def update_pihole_blocking(action, duration=None):
+    """Updates the blocking behavior for all Pi-Hole instances"""
 
     results = []
 
     with ThreadPoolExecutor(max_workers=min(10, len(PIHOLE_INSTANCES))) as executor:
-        future_to_device = {executor.submit(pihole_device_action, d, action, duration): d for d in PIHOLE_INSTANCES}
+        future_to_device = {
+            executor.submit(update_pihole_instance_blocking, d, action, duration):
+               d for d in PIHOLE_INSTANCES
+            }
 
         for future in as_completed(future_to_device):
             result = future.result()
             results.append(result)
 
 
-    return summarize_action_tuples(results)
+    return summarize_blocking_action_status(results)
 
-def pihole_device_action(instance_name, action, duration=None):
+def update_pihole_instance_blocking(instance_name, action, duration=None):
+    """Updates the blocking behavior for a single Pi-Hole instance"""
 
     instance = PIHOLE_INSTANCES[instance_name]
 
@@ -138,12 +154,14 @@ def pihole_device_action(instance_name, action, duration=None):
 
             session.delete(f"https://{domain}/api/auth", headers=headers)
 
-    except Exception as e:
+    except requests.RequestException as e:
         return False, str(e)
 
     return True, f"{action} Pi-Holes successful."
 
 def get_all_device_statuses(devices=PIHOLE_INSTANCES):
+    """Gets the blocking status for all Pi-Hole instances"""
+
     results = []
 
     with ThreadPoolExecutor(max_workers=min(10, len(devices))) as executor:
@@ -155,18 +173,22 @@ def get_all_device_statuses(devices=PIHOLE_INSTANCES):
 
     return results
 
-def summarize_action_tuples(action_result):
+def summarize_blocking_action_status(action_result):
+    """Aggregates the tuple responses from update_pihole_blocking(...)"""
+
     false_messages = [msg for ok, msg in action_result if not ok]
 
     if false_messages:
         return (False, ", ".join(false_messages))
-    elif action_result:
+
+    if action_result:
         return (True, action_result[0][1])
-    else:
-        return (True, "")
+
+    return (True, "")
 
 @app.route('/')
 def index():
+    """Main page route"""
     first_status = None
 
     device_statuses = get_all_device_statuses()
@@ -177,7 +199,7 @@ def index():
         device = PIHOLE_INSTANCES[instance]
         status = next((s for s in device_statuses if s[1] == instance), None)[0]
 
-        if(first_status is None):
+        if first_status is None:
             first_status = status
 
         devices_with_status.append({
@@ -191,21 +213,24 @@ def index():
 
 @app.route('/pause', methods=['POST'])
 def pause():
+    """Pause blocking route"""
     # success, msg = pihole_action("disable", request.form['duration'])
-    success, msg = pihole_action("disable", "")
+    success, msg = update_pihole_blocking("disable", "")
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
 
 
 @app.route('/resume', methods=['POST'])
 def resume():
-    success, msg = pihole_action("enable")
+    """Resume blocking route"""
+    success, msg = update_pihole_blocking("enable")
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
 
 
 @app.route('/sync', methods=['POST'])
 def sync():
+    """Trigger Nebula sync route"""
     try:
         subprocess.run(NEBULA_SYNC_COMMAND, check=True)
         flash("NebulaSync triggered.", 'success')
