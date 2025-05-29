@@ -22,6 +22,12 @@ You can use python to generate a secret key value:
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
+## Installation
+You can create and run a Docker image with:
+```bash
+docker compose up -d --build
+```
+
 ## License
 
 - **Code**: GPLv3 — see [LICENSE](/LICENSES/LICENSE)
