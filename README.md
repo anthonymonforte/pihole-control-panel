@@ -7,6 +7,9 @@ A simple service and UI to control one or more instances of Pi-Hole
 
 Use `config.py.changeme` for reference.  You must have a `config.py` file in the root folder with one or more Pi-Hole instances defined.
 
+Each Pi-Hole instance must also contain an API token which is obtained from the target Pi-Hole's UI -> Web Interface / API -> App Password
+- _You must enabled Expert mode_
+
 ### .env
 
 You must create a `.env` file which includes:
