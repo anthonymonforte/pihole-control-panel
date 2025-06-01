@@ -1,4 +1,5 @@
 *.asesprite
+config.py
 
 teleport_pi.env
 pi-hole-control-panel/config.py
