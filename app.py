@@ -17,7 +17,13 @@ Functions:
 """
 
 from flask import Flask, render_template, redirect, url_for, flash
-from config import PIHOLE_INSTANCES, FLASK_SECRET_KEY, NEBULA_SYNC_COMMAND
+try:
+    from config import PIHOLE_INSTANCES, NEBULA_SYNC_COMMAND
+except ImportError:
+    PIHOLE_INSTANCES = None
+    NEBULA_SYNC_COMMAND = None
+    FLASK_SECRET_KEY = None
+
 from pihole.manager import PiHoleManager
 from services.nebula import trigger_nebula_sync
 
