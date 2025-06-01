@@ -1,6 +1,10 @@
 # You must have an instance of config.py containing one or more entries for PIHOLE_INSTANCES in the root folder
 # The instances names do not have to be 'primary' and/or 'secondary'
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 PIHOLE_INSTANCES = {
     "primary": {
         "domain": "ip or domain",
@@ -17,3 +21,5 @@ PIHOLE_INSTANCES = {
         "image": "relative path of image icon"
     }
 }
+
+FLASK_SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
