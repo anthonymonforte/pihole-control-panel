@@ -18,7 +18,7 @@ Functions:
 
 from flask import Flask, render_template, redirect, url_for, flash
 try:
-    from config import PIHOLE_INSTANCES, NEBULA_SYNC_COMMAND
+    from config import PIHOLE_INSTANCES, NEBULA_SYNC_COMMAND, FLASK_SECRET_KEY
 except ImportError:
     PIHOLE_INSTANCES = None
     NEBULA_SYNC_COMMAND = None
