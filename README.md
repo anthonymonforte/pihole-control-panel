@@ -1,5 +1,6 @@
 # Pi-hole Control Panel
 
+[![pylint](https://img.shields.io/github/actions/workflow/status/anthonymonforte/pihole-control-panel/pylint.yml?branch=main&label=pylint)](https://github.com/lovelaze/nebula-sync/actions/workflows/go.yml?query=branch%3Amain)
 ![Python](https://img.shields.io/badge/python-3.12%2B-blue?logo=python)
 
 
