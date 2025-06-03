@@ -1,4 +1,8 @@
 # Pi-hole Control Panel
+
+![Python](https://img.shields.io/badge/python-3.11%2B-blue?logo=python)
+
+
 <img src="static/images/pi-panel-logo-off.png" alt="Pi-hole Control Panel" width="220" height="220">
 <strong>A simple web UI to enable/disable blocking on one or more instances of Pi-hole</strong>
 <br>
