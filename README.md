@@ -1,6 +1,6 @@
 # Pi-hole Control Panel
 
-![Python](https://img.shields.io/badge/python-3.11%2B-blue?logo=python)
+![Python](https://img.shields.io/badge/python-3.12%2B-blue?logo=python)
 
 
 <img src="static/images/pi-panel-logo-off.png" alt="Pi-hole Control Panel" width="220" height="220">
