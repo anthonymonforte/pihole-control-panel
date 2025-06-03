@@ -74,6 +74,7 @@ class PiHoleManager:
         """
         def _get_status(instance):
             return instance.get_blocking_status()
+
         return self._parallel_map(_get_status)
 
     def set_blocking_all(self, enable: bool, duration=None):
@@ -89,6 +90,8 @@ class PiHoleManager:
         """
         def _set_blocking(instance, enable, duration):
             return instance.set_blocking(enable, duration)
+
         raw_results = self._parallel_map(_set_blocking, enable, duration)
+
         return [(name, *(result if isinstance(result, tuple) else (False, "Error")))
                 for name, result in raw_results]

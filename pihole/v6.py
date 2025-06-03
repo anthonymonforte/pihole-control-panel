@@ -32,6 +32,8 @@ class PiHoleV6API(PiHoleAPIBase):
         super().__init__(domain, token)
         self.sid = None
         self.csrf = None
+        self.session = get_retrying_session()
+
 
     def authenticate(self):
         """
@@ -41,12 +43,21 @@ class PiHoleV6API(PiHoleAPIBase):
         Returns:
             tuple: (sid, csrf) if successful, (None, None) otherwise.
         """
-        if self.session:  # Prevent re-auth if already authenticated
-            return self.sid, self.csrf
 
         url = f"https://{self.domain}/api/auth"
+
+        response = self.session.get(url, timeout=5)
+
+        if response.status_code == 200:
+
+            data = response.json()
+            self.sid = data['session']['sid']
+            self.csrf = data['session']['csrf']
+
+            if(self.sid and self.csrf):
+                return self.sid, self.csrf
+
         payload = {"password": self.token}
-        self.session = get_retrying_session()
         try:
             response = self.session.post(url, json=payload, timeout=5)
             response.raise_for_status()
