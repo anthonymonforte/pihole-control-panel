@@ -17,8 +17,7 @@
 
 Use `config.py.changeme` for reference.  You must have a `config.py` file in the root folder with one or more Pi-hole instances defined.
 
-Each Pi-hole instance must also contain an API token which is obtained from the target Pi-hole's UI -> Web Interface / API -> App Password
-- _You must enable Expert mode_
+For each Pi-hole instance you may use your user/admin password as the API token or an App Password.  Create an App Password from the target Pi-hole's UI -> Web Interface / API -> App Password (_You must enable Expert mode_)
 
 ### .env
 
