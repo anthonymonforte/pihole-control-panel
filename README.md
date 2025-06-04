@@ -5,7 +5,7 @@
 
 
 <img src="static/images/pi-panel-logo-off.png" alt="Pi-hole Control Panel" width="220" height="220">
-<strong>A simple web UI to enable/disable blocking on one or more instances of Pi-hole</strong>
+<strong>A simple web UI to enable/disable blocking on one or more instances of Pi-hole (v6.xx)</strong>
 <br>
 <br>
 <i>This project is not a part of the official Pi-hole project, but uses the api provided by the Pi-hole instances.</i>
