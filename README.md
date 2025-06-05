@@ -13,7 +13,8 @@
 <br>
 <img src="static/images/UI.png" alt="Pi-hole Control Panel UI" width="250" height="324" style="border: 2px solid white; border-radius: 8px;">
 <br>
-## Installation
+
+## Configuration
 
 ## config.py
 
