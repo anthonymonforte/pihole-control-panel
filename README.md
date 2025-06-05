@@ -10,8 +10,10 @@
 <br>
 <i>This project is not a part of the official Pi-hole project, but uses the api provided by the Pi-hole instance(s).</i>
 <br>
-
-## Configuration
+<br>
+<img src="static/images/UI.png" alt="Pi-hole Control Panel UI" width="250" height="324" style="border: 2px solid white; border-radius: 8px;">
+<br>
+## Installation
 
 ## config.py
 
