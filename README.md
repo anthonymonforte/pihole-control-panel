@@ -3,15 +3,23 @@
 [![pylint](https://img.shields.io/github/actions/workflow/status/anthonymonforte/pihole-control-panel/pylint.yml?branch=main&label=pylint)](https://github.com/lovelaze/nebula-sync/actions/workflows/go.yml?query=branch%3Amain)
 ![Python](https://img.shields.io/badge/python-3.12%2B-blue?logo=python)
 
-
-<img src="static/images/pi-panel-logo-off.png" alt="Pi-hole Control Panel" width="220" height="220">
-<strong>A simple web UI to enable/disable blocking on one or more instances of Pi-hole (v6.xx)</strong>
-<br>
-<br>
-<i>This project is not a part of the official Pi-hole project, but uses the api provided by the Pi-hole instance(s).</i>
-<br>
-<br>
-<img src="static/images/UI.png" alt="Pi-hole Control Panel UI" width="250" height="324" style="border: 2px solid white; border-radius: 8px;">
+<p align="center">
+  <img src="static/images/pi-panel-logo-off.png" alt="Pi-hole Control Panel" width="220" height="220">
+</p>
+<div style="display: flex; align-items: center;">
+  <div style="flex: 3; padding-right: 1rem;">
+    <p>
+      <strong>A simple web UI to enable/disable blocking on one or more instances of Pi-hole (v6.x)</strong>
+      <br>
+      <br>
+      <i>This project is not a part of the official Pi-hole project, but uses the api provided by the Pi-hole instance(s).</i>
+      <br>
+      <br>  
+    </p>
+    <div style="flex: 1; text-align: right;">
+      <img src="static/images/UI.png" alt="Pi-hole Control Panel UI" width="250" height="324">
+    </div>
+  </div>
 <br>
 
 ## Configuration
