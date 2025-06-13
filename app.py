@@ -18,21 +18,25 @@ Functions:
 
 from flask import Flask, render_template, redirect, url_for, flash, jsonify
 try:
-    import config
+    from config import (
+        PIHOLE_INSTANCES,
+        FLASK_SECRET_KEY,
+        DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS,
+        DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS
+    )
 except ImportError:
-    config.PIHOLE_INSTANCES = None
-    config.FLASK_SECRET_KEY = None
-    config.DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS = None
-    config.DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS = None
+    PIHOLE_INSTANCES = None
+    FLASK_SECRET_KEY = None
+    DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS = None
+    DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS = None
 
 from pihole.manager import PiHoleManager
-from services.nebula import trigger_nebula_sync
 
 app = Flask(__name__)
-app.secret_key = config.FLASK_SECRET_KEY
+app.secret_key = FLASK_SECRET_KEY
 
 # Create the manager instance once, inject for testability
-pihole_manager = PiHoleManager(config.PIHOLE_INSTANCES)
+pihole_manager = PiHoleManager(PIHOLE_INSTANCES)
 
 def summarize_blocking_action_status(results, enable):
     """
@@ -51,13 +55,35 @@ def summarize_blocking_action_status(results, enable):
     return True, f"{'Enabled' if enable else 'Disabled'} blocking on all Pi-holes."
 
 def generate_instance_id(name):
+    """
+    Sanitize the instance/device name into a markup friendly format
+
+    Args:
+        name (string): name of the device/instance
+
+    Returns:
+        name: str
+    """
     return '-'.join(name.strip().lower().split())
 
 def get_instance_statuses():
+    """
+    Retrieve the current blocking status and timer for each configured Pi-hole instance.
+
+    Returns:
+        tuple:
+            - List of dictionaries, each containing:
+                - name (str): Human-readable device name.
+                - image (str): Path to the device image.
+                - id (str): Sanitized instance ID.
+                - status (bool): Blocking status (True/False).
+                - timer (int): Remaining seconds until status reverts (0 if none).
+            - first_status (bool or None): Blocking status of the first Pi-hole instance found.
+    """
     statuses = pihole_manager.get_statuses()
     devices_with_status = []
     first_status = None
-    for name, device in config.PIHOLE_INSTANCES.items():
+    for name, device in PIHOLE_INSTANCES.items():
         status_tuple = next((s for s in statuses if s[0] == name), None)
         status_obj = status_tuple[1] if status_tuple else None
         if first_status is None:
@@ -91,7 +117,8 @@ def pause():
     Returns:
         Response: Redirect to the main page.
     """
-    results = pihole_manager.set_blocking_all(enable=False, duration=config.DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS)
+    results = pihole_manager.set_blocking_all(enable=False,
+        duration=DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS)
     success, msg = summarize_blocking_action_status(results, enable=False)
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
@@ -104,13 +131,22 @@ def resume():
     Returns:
         Response: Redirect to the main page.
     """
-    results = pihole_manager.set_blocking_all(enable=True, duration=config.DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS)
+    results = pihole_manager.set_blocking_all(enable=True,
+        duration=DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS)
     success, msg = summarize_blocking_action_status(results, enable=True)
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
 
 @app.route("/api/statuses")
 def api_statuses():
+    """
+    API endpoint that returns the blocking statuses and timers for all Pi-hole instances.
+
+    Returns:
+        flask.Response: JSON response with:
+            - statuses (list): List of Pi-hole instance status dictionaries.
+            - first_status (bool or None): Blocking status of the first listed instance.
+    """
     devices_with_status, first_status = get_instance_statuses()
     return jsonify({
         "statuses": devices_with_status,

@@ -120,16 +120,16 @@
     }
 
     function tickTimers() {
-      let anyActive = false;
 
+      active_timers = false
       for (const [name, timeLeft] of Object.entries(timers)) {
+        active_timers = true
         const el = document.getElementById(name);
         if (!el) continue;
 
         if (timeLeft > 0) {
           timers[name] -= 1;
           el.textContent = `for ${timeLeft}s`;
-          anyActive = true
         } else {
           el.style.display = "none";
           el.textContent = "";
@@ -137,7 +137,11 @@
         }
       }
 
-      if (!anyActive) {
+      post_active_timers = false
+      for (const [name, timeLeft] of Object.entries(timers))
+        post_active_timers = true
+
+      if (active_timers && !post_active_timers) {
         updateDeviceStatuses();
       }
     }
@@ -145,6 +149,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       setInterval(updateDeviceStatuses, 30_000);
       setInterval(tickTimers, 1_000);
+      updateDeviceStatuses();
     });
 
 

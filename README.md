@@ -14,7 +14,7 @@
       <br>
       <i>This project is not a part of the official Pi-hole project, but uses the api provided by the Pi-hole instance(s).</i>
       <br>
-      <br>  
+      <br>
     </p>
     <div style="flex: 1; text-align: right;">
       <img src="static/images/UI.png" alt="Pi-hole Control Panel UI" width="250" height="324">
@@ -46,6 +46,21 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 You can create and run a Docker image with:
 ```bash
 docker compose up -d --build
+```
+
+## Local Development
+
+You can run it directly with:
+```bash
+flask run --host=0.0.0.0 --port=5000
+
+```
+
+Example Pylint commands:
+```bash
+pylint app.py services/ pihole/ utils/
+
+pylint ./**/*.py --ignore=config.py --ignore-paths=venv
 ```
 
 ## License
