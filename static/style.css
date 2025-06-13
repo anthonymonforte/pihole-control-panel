@@ -208,3 +208,11 @@ button.stop-button:hover {
     max-width: 160px;
   }
 }
+
+.flash-message {
+  transition: opacity 1s ease;
+}
+
+.flash-message.fade-out {
+  opacity: 0;
+}

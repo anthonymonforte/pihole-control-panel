@@ -70,7 +70,7 @@ class PiHoleManager:
         Retrieve the blocking status for all managed Pi-hole instances in parallel.
 
         Returns:
-            list: List of (name, status) tuples for each instance.
+            list: List of blocking statuses for each instance.
         """
         def _get_status(instance):
             return instance.get_blocking_status()

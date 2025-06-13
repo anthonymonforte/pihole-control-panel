@@ -85,8 +85,7 @@ class PiHoleV6API(PiHoleAPIBase):
         try:
             r = self.session.get(url, headers=headers, timeout=5)
             r.raise_for_status()
-            data = r.json()
-            return data.get("blocking", None)
+            return r.json()
         except requests.RequestException as e:
             print(f"Failed to get blocking status for {self.domain}: {e}")
             return None
@@ -107,8 +106,7 @@ class PiHoleV6API(PiHoleAPIBase):
             return False, "Authentication failed"
         url = f"https://{self.domain}/api/dns/blocking/?blocking={'true' if enable else 'false'}"
         payload = {"blocking": enable}
-        if enable and duration:
-            payload["timer"] = duration
+        payload["timer"] = duration
         headers = {"X-FTL-SID": sid, "X-FTL-CSRF": csrf}
         try:
             r = self.session.post(url, headers=headers, json=payload, timeout=5)

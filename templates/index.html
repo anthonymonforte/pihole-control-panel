@@ -8,9 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   {% if status == 'enabled' %}
-    <link id="favicon" rel="icon" href="{{ url_for('static', filename='icons/pi-panel-logo-off.ico') }}">
+    <link id="favicon" rel="icon" href="{{ url_for('static', filename='icons/pi-panel-logo-off.ico') }}" type="image/x-icon">
   {% else %}
-    <link id="favicon" rel="icon" href="{{ url_for('static', filename='icons/pi-panel-logo-on.ico') }}">
+    <link id="favicon" rel="icon" href="{{ url_for('static', filename='icons/pi-panel-logo-on.ico') }}" type="image/x-icon">
   {% endif %}
 
 </head>
@@ -19,10 +19,11 @@
 
   <div class="device-container">
     {% for device in devices %}
-      <div class="device-card">
+      <div class="device-card" id="device-{{ device.id }}">
         <img src="{{ url_for('static', filename=device.image) }}" alt="{{ device.name }} image">
         <p class="device-name">{{ device.name }}</p>
-        <p class="device-status {{ device.status|lower }}">{{ device.status }}</p>
+        <p class="device-status {{ device.status|lower }}" id="status-{{ device.id }}">{{ device.status }}</p>
+        <div class="device-status" id="status-timer-{{ device.id }}" style="display:block;"></div>
       </div>
     {% endfor %}
   </div>
@@ -53,6 +54,18 @@
     {% endif %}
   </div>
 
+  <div class="status-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-message">
+        {% for category, message in messages %}
+          <li style="color: {{ 'green' if category == 'success' else 'red' }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+
   <script>
     function playToggleAnimation(status) {
       const sprite = document.getElementById('toggle-sprite');
@@ -69,23 +82,100 @@
           ? "{{ url_for('static', filename='images/off-button.png') }}"
           : "{{ url_for('static', filename='images/on-button.png') }}";
 
-        // sprite.style.backgroundImage = `url('${finalImage}')`;
-
         sprite.closest('form').submit();
       }, 400);
     }
-  </script>
 
-  <div class="status-messages">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-        {% for category, message in messages %}
-          <li style="color: {{ 'green' if category == 'success' else 'red' }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-  </div>
+    const timers = {};
+    function updateDeviceStatuses() {
+      fetch("/api/statuses")
+        .then(response => response.json())
+        .then(data => {
+          data.statuses.forEach(device => {
+            const statusElement = document.getElementById(`status-${device.id}`);
+            if (statusElement) {
+              statusElement.textContent = device.status ?? "Unknown";
+              statusElement.className = `device-status ${device.status?.toLowerCase() || "unknown"}`;
+            }
+
+            const timerElement = document.getElementById(`status-timer-${device.id}`);
+            const timer = device.timer
+
+            if (timer > 0) {
+              timerElement.style.display = "block";
+              timers[`status-timer-${device.id}`] = timer;
+            } else {
+              timerElement.style.display = "none";
+              timerElement.textContent = "";
+              delete timers[`status-timer-${device.id}`];
+            }
+
+          updateToggleSprite(data.first_status);
+          updateFavicon(data.first_status);
+          });
+        })
+        .catch(err => {
+          console.error("Failed to fetch device statuses:", err);
+        });
+    }
+
+    function tickTimers() {
+      let anyActive = false;
+
+      for (const [name, timeLeft] of Object.entries(timers)) {
+        const el = document.getElementById(name);
+        if (!el) continue;
+
+        if (timeLeft > 0) {
+          timers[name] -= 1;
+          el.textContent = `for ${timeLeft}s`;
+          anyActive = true
+        } else {
+          el.style.display = "none";
+          el.textContent = "";
+          delete timers[name];
+        }
+      }
+
+      if (!anyActive) {
+        updateDeviceStatuses();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setInterval(updateDeviceStatuses, 30_000);
+      setInterval(tickTimers, 1_000);
+    });
+
+
+    function updateToggleSprite(status) {
+      const sprite = document.getElementById("toggle-sprite");
+      if (!sprite) return;
+      if (status === "enabled" || status === "running") {
+        sprite.style.backgroundImage = "url('/static/images/off-button.png')";
+      } else {
+        sprite.style.backgroundImage = "url('/static/images/on-button.png')";
+      }
+    }
+
+    function updateFavicon(status) {
+      const favicon = document.querySelector("link[rel~='icon']");
+      if (!favicon) return;
+      if (status === "enabled" || status === "running") {
+        favicon.href = "/static/icons/pi-panel-logo-off.ico";
+      } else {
+        favicon.href = "/static/icons/pi-panel-logo-on.ico";
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const flash = document.querySelector(".flash-message");
+      if (flash) {
+        setTimeout(() => {
+          flash.classList.add("fade-out");
+        }, 5000);
+      }
+    });
+  </script>
 </body>
 </html>
