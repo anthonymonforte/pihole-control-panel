@@ -34,8 +34,8 @@ For each Pi-hole instance you may use your user/admin password as the API token 
 |-----------|---------|----------|--------------------------------------------------|---------------------------------------------------------|
 | `PIHOLE_INSTANCES` | `{}` | Yes | <i>See below</i> | Configuration for each Pi-hole instances.  Must have at least one entry. |
 | `FLASK_SECRET_KEY` | n/a | Yes | `os.environ.get("FLASK_SECRET_KEY")` <br><i>if defined in .env file</i></br> | Secret key for Flask instance |
-| `DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS` | `None` | No | `300` | Duration in seconds that blocking will revert to enabled after disabling.<br>If not defined then blocking is disabled indefinitely.</br> |
-| `DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS` | `None` | No | `None` | Duration in seconds that blocking will revert to disabled after enabling.<br>If not defined then blocking is enabled indefinitely.</br> |
+| `BLOCKING_DISABLE_DURATION` | `None` | No | `300` | Duration in seconds that blocking will revert to enabled after disabling.<br>If not defined then blocking is disabled indefinitely.</br> |
+| `BLOCKING_ENABLE_DURATION` | `None` | No | `None` | Duration in seconds that blocking will revert to disabled after enabling.<br>If not defined then blocking is enabled indefinitely.</br> |
 
 `PIHOLE_INSTANCES` Example:
 ```yaml

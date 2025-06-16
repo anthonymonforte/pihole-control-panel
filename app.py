@@ -21,14 +21,14 @@ try:
     from config import (
         PIHOLE_INSTANCES,
         FLASK_SECRET_KEY,
-        DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS,
-        DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS
+        BLOCKING_DISABLE_DURATION,
+        BLOCKING_ENABLE_DURATION
     )
 except ImportError:
     PIHOLE_INSTANCES = None
     FLASK_SECRET_KEY = None
-    DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS = None
-    DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS = None
+    BLOCKING_DISABLE_DURATION = None
+    BLOCKING_ENABLE_DURATION = None
 
 from pihole.manager import PiHoleManager
 
@@ -118,7 +118,7 @@ def pause():
         Response: Redirect to the main page.
     """
     results = pihole_manager.set_blocking_all(enable=False,
-        duration=DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS)
+        duration=BLOCKING_DISABLE_DURATION)
     success, msg = summarize_blocking_action_status(results, enable=False)
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
@@ -132,7 +132,7 @@ def resume():
         Response: Redirect to the main page.
     """
     results = pihole_manager.set_blocking_all(enable=True,
-        duration=DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS)
+        duration=BLOCKING_ENABLE_DURATION)
     success, msg = summarize_blocking_action_status(results, enable=True)
     flash(msg, 'success' if success else 'danger')
     return redirect(url_for('index'))
