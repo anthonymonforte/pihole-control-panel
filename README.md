@@ -16,9 +16,9 @@
       <br>
       <br>
     </p>
-    <div style="flex: 1; text-align: right;">
-      <img src="static/images/UI.png" alt="Pi-hole Control Panel UI Off" width="250" height="324">
-      <img src="static/images/UI-On.png" alt="Pi-hole Control Panel UI On" width="250" height="324">
+    <div style="flex: 1; text-align: right;">      
+        <img src="static/images/UI.png" alt="Pi-hole Control Panel UI Off" width="250" height="324" margin=10px>        
+        <img src="static/images/UI-On.png" alt="Pi-hole Control Panel UI On" width="250" height="324">      
     </div>
   </div>
 <br>
