@@ -17,20 +17,14 @@ Functions:
 """
 
 from flask import Flask, render_template, redirect, url_for, flash, jsonify
-try:
-    from config import (
-        PIHOLE_INSTANCES,
-        FLASK_SECRET_KEY,
-        BLOCKING_DISABLE_DURATION,
-        BLOCKING_ENABLE_DURATION
-    )
-except ImportError:
-    PIHOLE_INSTANCES = None
-    FLASK_SECRET_KEY = None
-    BLOCKING_DISABLE_DURATION = None
-    BLOCKING_ENABLE_DURATION = None
-
+from utils.config_loader import load_config
 from pihole.manager import PiHoleManager
+
+_config = load_config()
+PIHOLE_INSTANCES = _config["PIHOLE_INSTANCES"]
+FLASK_SECRET_KEY = _config["FLASK_SECRET_KEY"]
+BLOCKING_DISABLE_DURATION = _config["BLOCKING_DISABLE_DURATION"]
+BLOCKING_ENABLE_DURATION = _config["BLOCKING_ENABLE_DURATION"]
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
