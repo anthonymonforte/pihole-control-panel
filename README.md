@@ -30,6 +30,33 @@ Use `config.py.changeme` for reference.  You must have a `config.py` file in the
 
 For each Pi-hole instance you may use your user/admin password as the API token or an App Password.  Create an App Password from the target Pi-hole's UI -> Web Interface / API -> App Password (_You must enable Expert mode_)
 
+| Name      | Default | Required | Example Value                                    | Description                                             |
+|-----------|---------|----------|--------------------------------------------------|---------------------------------------------------------|
+| `PIHOLE_INSTANCES` | `{}` | Yes | <i>See below</i> | Configuration for each Pi-hole instances.  Must have at least one entry. |
+| `FLASK_SECRET_KEY` | n/a | Yes | `os.environ.get("FLASK_SECRET_KEY")` <br><i>if defined in .env file</i></br> | Secret key for Flask instance |
+| `DEFAULT_BLOCKING_DISABLE_DURATION_IN_SECONDS` | `None` | No | `300` | Duration in seconds that blocking will revert to enabled after disabling.<br>If not defined then blocking is disabled indefinitely.</br> |
+| `DEFAULT_BLOCKING_ENABLE_DURATION_IN_SECONDS` | `None` | No | `None` | Duration in seconds that blocking will revert to disabled after enabling.<br>If not defined then blocking is enabled indefinitely.</br> |
+
+`PIHOLE_INSTANCES` Example:
+```yaml
+    "primary": {
+        "domain": "pihole.yourdomain.net",
+        "token": os.environ.get("PIHOLE_API_TOKEN"),
+        "name": "Raspberry Pi 4",
+        "location": "Office",
+        "image": "/images/device/pi-case.png",
+        "api_version": "v6"
+    },
+    "secondary": {
+        "domain": "nas-pihole.yourdomain.net",
+        "token": os.environ.get("NAS_API_TOKEN"),
+        "name": "NAS",
+        "location": "Server Room",
+        "image": "/images/device/nas.png",
+        "api_version": "v6"
+    }
+```
+
 ### .env
 
 You must create a `.env` file which includes:
