@@ -80,14 +80,20 @@ def get_instance_statuses():
     for name, device in PIHOLE_INSTANCES.items():
         status_tuple = next((s for s in statuses if s[0] == name), None)
         status_obj = status_tuple[1] if status_tuple else None
-        if first_status is None:
-            first_status = status_obj["blocking"]
+        if isinstance(status_obj, dict):
+            status = status_obj.get("blocking", "Unknown")
+            timer = int(status_obj["timer"]) if status_obj.get("timer") else 0
+            if first_status is None:
+                first_status = status
+        else:
+            status = "Unknown"
+            timer = 0
         devices_with_status.append({
             "name": device["name"],
             "image": device["image"],
             "id": generate_instance_id(device["name"]),
-            "status": status_obj["blocking"],
-            "timer": int(status_obj["timer"]) if status_obj["timer"] else 0
+            "status": status,
+            "timer": timer
         })
 
     return devices_with_status, first_status

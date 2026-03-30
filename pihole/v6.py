@@ -49,12 +49,17 @@ class PiHoleV6API(PiHoleAPIBase):
         response = self.session.get(url, timeout=5)
 
         if response.status_code == 200:
+            try:
+                data = response.json()
+                session = data.get("session") or {}
+                self.sid = session.get("sid")
+                self.csrf = session.get("csrf")
+            except ValueError:
+                print(f"Auth status response for {self.domain} was not valid JSON")
+                self.sid = None
+                self.csrf = None
 
-            data = response.json()
-            self.sid = data['session']['sid']
-            self.csrf = data['session']['csrf']
-
-            if(self.sid and self.csrf):
+            if self.sid and self.csrf:
                 return self.sid, self.csrf
 
         payload = {"password": self.token}
@@ -65,6 +70,10 @@ class PiHoleV6API(PiHoleAPIBase):
             self.sid = data['session']['sid']
             self.csrf = data['session']['csrf']
             return self.sid, self.csrf
+        except ValueError:
+            print(f"Auth response for {self.domain} was not valid JSON")
+            self.logout()
+            return None, None
         except requests.RequestException as e:
             print(f"Auth failed for {self.domain}: {e}")
             self.logout()
@@ -85,7 +94,14 @@ class PiHoleV6API(PiHoleAPIBase):
         try:
             r = self.session.get(url, headers=headers, timeout=5)
             r.raise_for_status()
-            return r.json()
+            data = r.json()
+            if not isinstance(data, dict) or "blocking" not in data:
+                print(f"Unexpected blocking status payload for {self.domain}: {data}")
+                return None
+            return data
+        except ValueError:
+            print(f"Blocking status response for {self.domain} was not valid JSON")
+            return None
         except requests.RequestException as e:
             print(f"Failed to get blocking status for {self.domain}: {e}")
             return None
