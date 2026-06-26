@@ -16,6 +16,8 @@ Functions:
      for UI feedback.
 """
 
+import logging
+
 from flask import Flask, render_template, redirect, url_for, flash, jsonify
 from utils.config_loader import load_config
 from pihole.manager import PiHoleManager
@@ -28,6 +30,8 @@ BLOCKING_ENABLE_DURATION = _config["BLOCKING_ENABLE_DURATION"]
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
+logging.basicConfig(level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s in %(name)s: %(message)s')
 
 # Create the manager instance once, inject for testability
 pihole_manager = PiHoleManager(PIHOLE_INSTANCES)
@@ -86,6 +90,8 @@ def get_instance_statuses():
             if first_status is None:
                 first_status = status
         else:
+            app.logger.warning("No Pi-hole status available for instance '%s' (%s)",
+                name, device["name"])
             status = "Unknown"
             timer = 0
         devices_with_status.append({
